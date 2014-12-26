@@ -1,26 +1,50 @@
 require 'sinatra'
 require 'twilio-ruby'
+require 'json'
+require 'rest-client'
 
 configure :development do
-  require 'sinatra/reloader'
+	require 'sinatra/reloader'
 end
 
 Twilio.configure do |config|
-  config.account_sid = ENV['ACCOUNT_SID']
-  config.auth_token = ENV['AUTH_TOKEN']
+	config.account_sid = ENV['ACCOUNT_SID']
+	config.auth_token = ENV['AUTH_TOKEN']
 end
 
 post '/receive' do
 	#@client= Twilio::REST::Client.new
 	message=params[:Body].split(' ')
 	if message.length ==1
-		foodquery=message[0]
-	
-		return foodquery
+		countryfrom=message[0]
+		countryto=message[1]
+		query="http://www.freecurrencyconverterapi.com/api/v2/convert?q=#{USD}_#{INR}&compact=y"
+		api_result = RestClient.get query
+		dict_result=JSON.parse(api_result)
+
+		dict_result['main'].each do |w|
+			title_tag = w[0]
+			info_item = w[1]
+			output << "<tr><td>#{title_tag}</td><td>#{info_item}</td></tr>"
+
+			return 
+		end
 	end
 end
 
+get '/convert/:from/:to' do
+	countryfrom=params[:from]
+	countryto=params[:to]
+	query="http://www.freecurrencyconverterapi.com/api/v2/convert?q=#{countryfrom}_#{countryto}&compact=y"
+	api_result = RestClient.get query
+	dict_result=JSON.parse(api_result)
 
+	dict_result['main'].each do |w|
+		title_tag = w[0]
+		info_item = w[1]
+		output << "<tr><td>#{title_tag}</td><td>#{info_item}</td></tr>" 
+	end
+end
 # @client.messages.create(
 # 			from:ENV['MY_NUMBER'],
 # 			to:params[:From],
