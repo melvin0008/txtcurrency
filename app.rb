@@ -10,7 +10,7 @@ Twilio.configure do |config|
 end
 
 post '/convert' do
-	#@client= Twilio::REST::Client.new
+	@client= Twilio::REST::Client.new
 	message=params[:Body].split(' ')
 	if message.length ==2
 		begin
@@ -21,25 +21,25 @@ post '/convert' do
 			api_result = RestClient.get query
 			dict_result=JSON.parse(api_result)
 			return_val= "1 #{countryfrom} => #{dict_result[parameter]['val']} #{countryto}"
-			# @client.messages.create(
-			# 	from:ENV['MY_NUMBER'],
-			# 	to:params[:From],
-			# 	body:return_val)
-			from=params[:From]
-			return "#{return_val} #{from} #{ENV['ACCOUNT_SID']}#{ENV['AUTH_TOKEN']}"
+			@client.messages.create(
+				from:ENV['MY_NUMBER'],
+				to:params[:From],
+				body:return_val)
+			# from=params[:From]
+			# return "#{return_val} #{from} #{ENV['ACCOUNT_SID']}#{ENV['AUTH_TOKEN']}"
 		rescue NameError
-			# @client.messages.create(
-			# 	from: ENV['MY_NUMBER'],
-			# 	to: params[:From],
-			# 	body: 'Invalid request'
-			# 	)
+			@client.messages.create(
+				from: ENV['MY_NUMBER'],
+				to: params[:From],
+				body: 'Invalid request'
+				)
 		end
 	else
-		# @client.messages.create(
-		# 	from: ENV['MY_NUMBER'],
-		# 	to: params[:From],
-		# 	body: 'Invalid request'
-		# 	)
+		@client.messages.create(
+			from: ENV['MY_NUMBER'],
+			to: params[:From],
+			body: 'Invalid request'
+			)
 	end
 end
 
