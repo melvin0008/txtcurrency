@@ -26,7 +26,7 @@ post '/convert' do
 			# 	to:params[:From],
 			# 	body:return_val)
 			from=params[:From]
-			return "#{return_val} #{from} #{ENV['MY_NUMBER']}"
+			return "#{return_val} #{from} #{ENV['ACCOUNT_SID']}#{ENV['AUTH_TOKEN']}"
 		rescue NameError
 			# @client.messages.create(
 			# 	from: ENV['MY_NUMBER'],
