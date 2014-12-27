@@ -3,9 +3,6 @@ require 'twilio-ruby'
 require 'json'
 require 'rest-client'
 
-configure :development do
-	require 'sinatra/reloader'
-end
 
 Twilio.configure do |config|
 	config.account_sid = ENV['ACCOUNT_SID']
@@ -18,7 +15,7 @@ post '/receive' do
 	if message.length ==1
 		countryfrom=message[0]
 		countryto=message[1]
-		query="http://www.freecurrencyconverterapi.com/api/v2/convert?q=#{USD}_#{INR}&compact=y"
+		query="http://www.freecurrencyconverterapi.com/api/v2/convert?q=#{countryfrom}_#{countryto}&compact=y"
 		api_result = RestClient.get query
 		dict_result=JSON.parse(api_result)
 
@@ -33,16 +30,18 @@ post '/receive' do
 end
 
 get '/convert/:from/:to' do
-	countryfrom=params[:from]
-	countryto=params[:to]
-	query="http://www.freecurrencyconverterapi.com/api/v2/convert?q=#{countryfrom}_#{countryto}&compact=y"
-	api_result = RestClient.get query
-	dict_result=JSON.parse(api_result)
+	begin
+		countryfrom=params[:from].upcase
+		countryto=params[:to].upcase
+		parameter="#{countryfrom}_#{countryto}"
+		query="http://www.freecurrencyconverterapi.com/api/v2/convert?q=#{parameter}&compact=y"
+		api_result = RestClient.get query
+		dict_result=JSON.parse(api_result)
 
-	dict_result['main'].each do |w|
-		title_tag = w[0]
-		info_item = w[1]
-		output << "<tr><td>#{title_tag}</td><td>#{info_item}</td></tr>" 
+		return_val= "#{dict_result[parameter]['val']}"
+		return return_val
+	rescue NameError46
+		return "Enter Proper format"
 	end
 end
 # @client.messages.create(
