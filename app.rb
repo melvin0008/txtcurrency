@@ -12,7 +12,7 @@ end
 post '/convert' do
 	@client= Twilio::REST::Client.new
 	message=params[:Body].split(' ')
-	if message.length ==1
+	if message.length ==2
 		begin
 			countryfrom=message[0].upcase
 			countryto=message[1].upcase
@@ -39,4 +39,8 @@ post '/convert' do
 			body: 'Invalid request'
 			)
 	end
+end
+
+get '/' do
+	"Yalla"
 end
