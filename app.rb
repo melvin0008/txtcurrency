@@ -25,7 +25,7 @@ post '/convert' do
 			# 	from:ENV['MY_NUMBER'],
 			# 	to:params[:From],
 			# 	body:return_val)
-			return "#{return_val} params[:From] ENV['MY_ERROR']"
+			return "#{return_val} #{params[:From]} #{ENV['MY_NUMBER']}"
 		rescue NameError
 			# @client.messages.create(
 			# 	from: ENV['MY_NUMBER'],
